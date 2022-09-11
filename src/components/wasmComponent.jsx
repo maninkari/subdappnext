@@ -1,42 +1,101 @@
-import { React, useEffect, useRef, createRef } from 'react'
+import { React, useEffect, createRef } from 'react'
+import {
+  Box,
+  Button,
+  Center,
+  Flex,
+  Spacer,
+  Stack,
+  Heading,
+} from '@chakra-ui/react'
 import dynamic from 'next/dynamic'
 
-const WIDTH = 720.0
-const HEIGHT = 480.0
+const WIDTH = 480.0
+const HEIGHT = 360.0
 const mirrorCanvas = createRef()
+const mirrorConvolute = createRef()
 
+// this is a server side redered app, components that refer to elements in the DOM need to be dynamicaly loaded
 const WasmComponent = dynamic({
   loader: async () => {
     const wasm = await import('../wasm/mirror/pkg')
-    console.log('wasm: ', wasm)
     const bytes = await fetch('http://localhost:3000/convoluted_mirror_bg.wasm')
     const buffer = await bytes.arrayBuffer()
     await wasm.default(buffer)
 
-    console.log('wasm: ', wasm)
-    const m = new wasm.Mirror(mirrorCanvas.current, WIDTH, HEIGHT)
+    const stream = await navigator.mediaDevices.getUserMedia({
+      audio: false,
+      video: {
+        facingMode: 'user',
+        width: WIDTH,
+        height: HEIGHT,
+      },
+    })
 
-    return () => <div>m: {m && m.talk()}</div>
+    video.srcObject = stream
+    await video.play()
+
+    const mirror = new wasm.Mirror(mirrorCanvas.current, WIDTH, HEIGHT)
+
+    const capture = async () => {
+      mirror.convolute(mirrorConvolute.current.getContext('2d'))
+    }
+
+    async function animate() {
+      // draw frame coming from the video stream
+      if (mirrorCanvas && mirrorCanvas.current) {
+        mirrorCanvas.current.getContext('2d').drawImage(video, 0, 0)
+      }
+
+      requestAnimationFrame(animate)
+    }
+    requestAnimationFrame(animate)
+
+    return () => <Button onClick={() => capture()}>capture</Button>
   },
   ssr: false,
 })
 
-export default function WasmComp() {
-  useEffect(() => {
-    console.log('useEffect 1')
-  }, [])
+export default function WasmComp({ client }) {
+  useEffect(() => {}, [])
+
+  const save = async () => {
+    let canvasUrl = mirrorConvolute.current.toDataURL('image/png', 1)
+    console.log(canvasUrl)
+    client.putObject(new Uint8Array(canvasUrl))
+  }
 
   return (
-    <div>
-      Our WASM component:
-      <canvas
-        id="mirrorCanvas"
-        width="720"
-        height="480"
-        ref={mirrorCanvas}
-        style={{ backgroundcolor: 'red' }}
-      ></canvas>
-      <WasmComponent />
-    </div>
+    <Box m=".5em">
+      <Stack spacing={4} direction="row" align="center" mb=".5em">
+        <WasmComponent />
+        <Button onClick={() => save()}>save</Button>
+      </Stack>
+      <Stack direction={{ base: 'column', md: 'row' }} align="center">
+        <Box bg="tomato" minW={WIDTH} maxW={WIDTH}>
+          <canvas
+            id="mirrorConvolute"
+            width={WIDTH}
+            height={HEIGHT}
+            ref={mirrorConvolute}
+          ></canvas>
+        </Box>
+        <Box>
+          <canvas
+            id="mirrorCanvas"
+            width={WIDTH}
+            height={HEIGHT}
+            ref={mirrorCanvas}
+          ></canvas>
+        </Box>
+      </Stack>
+      {/* <Flex p="1.5em">
+        
+      </Flex> */}
+
+      <Box display={'none'}>
+        <video id="video" width={WIDTH} height={HEIGHT}></video>
+      </Box>
+    </Box>
   )
 }

@@ -6,10 +6,9 @@ const nextConfig = {
 
     // generate wasm module in ".next/server" for ssr & ssg
     if (isServer) {
-      config.output.webassemblyModuleFilename =
-        './../static/wasm/[modulehash].wasm'
+      config.output.webassemblyModuleFilename = './../static/wasm/[name].wasm'
     } else {
-      config.output.webassemblyModuleFilename = 'static/wasm/[modulehash].wasm'
+      config.output.webassemblyModuleFilename = 'static/wasm/[name].wasm'
     }
     return config
   },

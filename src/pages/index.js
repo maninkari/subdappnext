@@ -1,12 +1,13 @@
 import Head from 'next/head'
 import Image from 'next/image'
+import { Box, Button, Flex, Text, Heading } from '@chakra-ui/react'
 
 const Page = () => {
   return (
-    <div>
-      <h1>Subspace</h1>
+    <Box>
+      <Heading>Subspace</Heading>
       <h2>Home task</h2>
-    </div>
+    </Box>
   )
 }
 

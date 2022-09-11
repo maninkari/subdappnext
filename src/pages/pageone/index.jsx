@@ -1,9 +1,7 @@
 import { React, useEffect, useState } from 'react'
 import { SubspaceClient, Identity } from '@subspace/subspace'
-import { stringToU8a, u8aToHex } from '@polkadot/util'
-// import init, * as wasm from '../../assets/convoluted_mirror'
-// import mirrorwasm from '../../assets/convoluted_mirror_bg.wasm'
 import WasmComp from '../../components/wasmComponent'
+import { Box, Button, Flex, Text, Heading } from '@chakra-ui/react'
 
 const NODE_WS_PROVIDER = process.env.REACT_APP_NODE_WS_PROVIDER
 const FARMER_WS_PROVIDER = process.env.REACT_APP_FARMER_WS_PROVIDER
@@ -16,6 +14,7 @@ const Page = () => {
   const [object, setObject] = useState(null)
   const [message, setMessage] = useState(null)
   const [fileData, setFileData] = useState(null)
+  const [keyringPair, setKeyringPair] = useState(null)
 
   const availableAccounts = identity ? identity.getKeyring().getPairs() : []
 
@@ -42,6 +41,7 @@ const Page = () => {
           FARMER_WS_PROVIDER
         ).then((subspaceClient) => {
           setSubspaceClient(subspaceClient)
+          setKeyringPair(identity.getKeyringPair())
           setSelectedAccount(identity.getKeyringPair().address)
         })
       }
@@ -50,54 +50,25 @@ const Page = () => {
     }
   }, [identity])
 
-  const loadFile = (file) => {
-    let reader = new FileReader()
-    reader.onload = () => {
-      if (reader.result) {
-        const value = new Uint8Array(reader.result)
-        setFileData(value)
-      }
-    }
-    reader.readAsArrayBuffer(file)
-  }
-
-  const getObject = async () => {
-    try {
-      const object = await subspaceClient.getObject(objectId)
-      setObject(object)
-    } catch (e) {
-      setMessage(e)
-    }
-  }
-
-  const putObject = async () => {
-    try {
-      const objectId = await subspaceClient.putObject(fileData)
-      setObjectId(objectId)
-    } catch (e) {
-      setMessage(e)
-    }
-  }
-
   const handleAccountSelect = ({ target }) => setSelectedAccount(target.value)
 
   const getLabel = ({ address, meta }) => {
     return meta.name.toUpperCase() + ' | ' + address
   }
 
-  const signdoc = () => {
-    const msg = stringToU8a('this is our message')
-    let p = subspaceClient.putObject(msg)
-    console.log(p)
-  }
-
   return (
     <div>
-      <h1>Page One</h1>
-      <h2>1</h2>
-      <button onClick={() => signdoc()}>bton</button>
-      <p>{JSON.stringify(identity)}</p>
-      <WasmComp />
+      <Heading>Page One</Heading>
+      <Box
+        m=".5em"
+        p="1.5em"
+        bg="lightgray"
+        maxW={{ base: '100%', md: '700px' }}
+      >
+        <p>Account address: {keyringPair && keyringPair.address}</p>
+        <p>Account name: {keyringPair && keyringPair.meta.name}</p>
+      </Box>
+      {subspaceClient && <WasmComp client={subspaceClient} />}
     </div>
   )
 }

@@ -1,0 +1,15 @@
+{
+  "name": "convoluted-mirror",
+  "collaborators": [
+    "roberto.torres <ts.roberto@gmail.com>"
+  ],
+  "version": "0.1.0",
+  "files": [
+    "convoluted_mirror_bg.wasm",
+    "convoluted_mirror.js",
+    "convoluted_mirror.d.ts"
+  ],
+  "module": "convoluted_mirror.js",
+  "types": "convoluted_mirror.d.ts",
+  "sideEffects": false
+}
