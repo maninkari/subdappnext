@@ -2,11 +2,12 @@
   "name": "subdappnext",
   "version": "0.1.0",
   "private": true,
+  "author": "roberto.torres <ts.roberto@gmail.com>",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "cypress": "cypress open --br",
+    "cypress": "cypress open",
     "cypress:headless": "cypress run",
     "e2e": "start-server-and-test start http://localhost:3000 cypress",
     "lint": "next lint"
