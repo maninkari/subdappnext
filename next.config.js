@@ -2,7 +2,7 @@
 const nextConfig = {
   reactStrictMode: true,
   webpack: (config, { isServer }) => {
-    config.experiments = { asyncWebAssembly: true }
+    config.experiments = { asyncWebAssembly: true, layers: true }
 
     // generate wasm module in ".next/server" for ssr & ssg
     if (isServer) {

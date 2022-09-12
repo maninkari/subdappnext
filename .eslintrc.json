@@ -1,3 +1,4 @@
 {
+  "ignorePatterns": ["*.js", "/src/wasm/**/*.js"],
   "extends": "next/core-web-vitals"
 }

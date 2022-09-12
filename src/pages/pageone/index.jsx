@@ -10,11 +10,8 @@ const Page = () => {
   const [selectedAccount, setSelectedAccount] = useState(null)
   const [identity, setIdentity] = useState(null)
   const [subspaceClient, setSubspaceClient] = useState(null)
-  const [objectId, setObjectId] = useState(null)
-  const [object, setObject] = useState(null)
-  const [message, setMessage] = useState(null)
-  const [fileData, setFileData] = useState(null)
   const [keyringPair, setKeyringPair] = useState(null)
+  const [message, setMessage] = useState(null)
 
   const availableAccounts = identity ? identity.getKeyring().getPairs() : []
 
@@ -58,7 +55,9 @@ const Page = () => {
 
   return (
     <div>
-      <Heading>Page One</Heading>
+      <Heading as="h1" size="lg">
+        Page One
+      </Heading>
       <Box
         m=".5em"
         p="1.5em"

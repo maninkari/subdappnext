@@ -17,7 +17,6 @@ const MenuLinks = ({ isOpen }) => {
       >
         <MenuItem to="/">Home</MenuItem>
         <MenuItem to="/pageone">Page One</MenuItem>
-        <MenuItem to="/contact-us">Contact Us</MenuItem>
       </Stack>
     </Box>
   )

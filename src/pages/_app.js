@@ -1,4 +1,4 @@
-import {ChakraProvider, extendTheme} from '@chakra-ui/react'
+import { ChakraProvider, extendTheme } from '@chakra-ui/react'
 import MainLayout from '../components/mainLayout'
 import 'reset-css'
 
@@ -14,8 +14,8 @@ const theme = extendTheme({
       700: '#616161',
       800: '#424242',
       900: '#212121',
-    }
-  }
+    },
+  },
 })
 
 function MyApp({ Component, pageProps }) {
@@ -25,8 +25,7 @@ function MyApp({ Component, pageProps }) {
         <Component {...pageProps} />
       </MainLayout>
     </ChakraProvider>
-    
-  ) 
+  )
 }
 
 export default MyApp

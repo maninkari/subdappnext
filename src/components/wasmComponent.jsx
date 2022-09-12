@@ -19,7 +19,9 @@ const mirrorConvolute = createRef()
 const WasmComponent = dynamic({
   loader: async () => {
     const wasm = await import('../wasm/mirror/pkg')
-    const bytes = await fetch('http://localhost:3000/convoluted_mirror_bg.wasm')
+    const bytes = await fetch(
+      'http://randomendpoint.org/convoluted_mirror_bg.wasm'
+    )
     const buffer = await bytes.arrayBuffer()
     await wasm.default(buffer)
 
@@ -51,7 +53,11 @@ const WasmComponent = dynamic({
     }
     requestAnimationFrame(animate)
 
-    return () => <Button onClick={() => capture()}>capture</Button>
+    return () => (
+      <Button id="btn-capture" colorScheme="whatsapp" onClick={() => capture()}>
+        capture
+      </Button>
+    )
   },
   ssr: false,
 })
@@ -61,7 +67,6 @@ export default function WasmComp({ client }) {
 
   const save = async () => {
     let canvasUrl = mirrorConvolute.current.toDataURL('image/png', 1)
-    console.log(canvasUrl)
     client.putObject(new Uint8Array(canvasUrl))
   }
 
@@ -69,10 +74,12 @@ export default function WasmComp({ client }) {
     <Box m=".5em">
       <Stack spacing={4} direction="row" align="center" mb=".5em">
         <WasmComponent />
-        <Button onClick={() => save()}>save</Button>
+        <Button id="btn-save" colorScheme="green" onClick={() => save()}>
+          save
+        </Button>
       </Stack>
       <Stack direction={{ base: 'column', md: 'row' }} align="center">
-        <Box bg="tomato" minW={WIDTH} maxW={WIDTH}>
+        <Box bg="tomato" boxShadow="lg" minW={WIDTH} maxW={WIDTH}>
           <canvas
             id="mirrorConvolute"
             width={WIDTH}
@@ -80,7 +87,7 @@ export default function WasmComp({ client }) {
             ref={mirrorConvolute}
           ></canvas>
         </Box>
-        <Box>
+        <Box boxShadow="lg">
           <canvas
             id="mirrorCanvas"
             width={WIDTH}
@@ -89,9 +96,6 @@ export default function WasmComp({ client }) {
           ></canvas>
         </Box>
       </Stack>
-      {/* <Flex p="1.5em">
-        
-      </Flex> */}
 
       <Box display={'none'}>
         <video id="video" width={WIDTH} height={HEIGHT}></video>
