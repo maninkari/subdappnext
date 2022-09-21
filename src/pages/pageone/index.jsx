@@ -5,6 +5,7 @@ import { Box, Button, Flex, Text, Heading } from '@chakra-ui/react'
 
 const NODE_WS_PROVIDER = process.env.REACT_APP_NODE_WS_PROVIDER
 const FARMER_WS_PROVIDER = process.env.REACT_APP_FARMER_WS_PROVIDER
+const suri = '//Alice'
 
 const Page = () => {
   const [selectedAccount, setSelectedAccount] = useState(null)
@@ -16,8 +17,8 @@ const Page = () => {
   const availableAccounts = identity ? identity.getKeyring().getPairs() : []
 
   useEffect(() => {
-    console.log('useEffect 1')
-    Identity.fromWeb3()
+    // console.log('useEffect 1')
+    const id = Identity.fromUri(suri)
       .then((identity) => {
         setIdentity(identity)
         console.log('identity: ', identity)
@@ -25,6 +26,15 @@ const Page = () => {
       .catch((error) => {
         setMessage(error)
       })
+
+    // Identity.fromWeb3()
+    //   .then((identity) => {
+    //     setIdentity(identity)
+    //     console.log('identity: ', identity)
+    //   })
+    //   .catch((error) => {
+    //     setMessage(error)
+    //   })
   }, [])
 
   useEffect(() => {
