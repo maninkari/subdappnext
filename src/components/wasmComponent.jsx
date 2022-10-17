@@ -14,14 +14,13 @@ const WIDTH = 480.0
 const HEIGHT = 360.0
 const mirrorCanvas = createRef()
 const mirrorConvolute = createRef()
+const frameCanvas = createRef()
 
 // this is a server side redered app, components that refer to elements in the DOM need to be dynamicaly loaded
 const WasmComponent = dynamic({
   loader: async () => {
     const wasm = await import('../wasm/mirror/pkg')
-    const bytes = await fetch(
-      'http://randomendpoint.org/convoluted_mirror_bg.wasm'
-    )
+    const bytes = await fetch('/convoluted_mirror_bg.wasm')
     const buffer = await bytes.arrayBuffer()
     await wasm.default(buffer)
 
@@ -40,6 +39,15 @@ const WasmComponent = dynamic({
     const mirror = new wasm.Mirror(mirrorCanvas.current, WIDTH, HEIGHT)
 
     const capture = async () => {
+      frameCanvas.current
+        .getContext('2d')
+        .putImageData(
+          mirrorCanvas.current
+            .getContext('2d')
+            .getImageData(0, 0, WIDTH, HEIGHT),
+          0,
+          0
+        )
       mirror.convolute(mirrorConvolute.current.getContext('2d'))
     }
 
@@ -62,12 +70,12 @@ const WasmComponent = dynamic({
   ssr: false,
 })
 
-export default function WasmComp({ client }) {
+export default function WasmComp() {
   useEffect(() => {}, [])
 
   const save = async () => {
-    let canvasUrl = mirrorConvolute.current.toDataURL('image/png', 1)
-    client.putObject(new Uint8Array(canvasUrl))
+    // let canvasUrl = mirrorConvolute.current.toDataURL('image/png', 1)
+    // client.putObject(new Uint8Array(canvasUrl))
   }
 
   return (
@@ -85,6 +93,14 @@ export default function WasmComp({ client }) {
             width={WIDTH}
             height={HEIGHT}
             ref={mirrorConvolute}
+          ></canvas>
+        </Box>
+        <Box boxShadow="lg">
+          <canvas
+            id="frameCanvas"
+            width={WIDTH}
+            height={HEIGHT}
+            ref={frameCanvas}
           ></canvas>
         </Box>
         <Box boxShadow="lg">

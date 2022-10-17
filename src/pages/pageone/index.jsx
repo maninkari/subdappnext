@@ -8,61 +8,6 @@ const FARMER_WS_PROVIDER = process.env.REACT_APP_FARMER_WS_PROVIDER
 const suri = '//Alice'
 
 const Page = () => {
-  const [selectedAccount, setSelectedAccount] = useState(null)
-  const [identity, setIdentity] = useState(null)
-  const [subspaceClient, setSubspaceClient] = useState(null)
-  const [keyringPair, setKeyringPair] = useState(null)
-  const [message, setMessage] = useState(null)
-
-  const availableAccounts = identity ? identity.getKeyring().getPairs() : []
-
-  useEffect(() => {
-    // console.log('useEffect 1')
-    const id = Identity.fromUri(suri)
-      .then((identity) => {
-        setIdentity(identity)
-        console.log('identity: ', identity)
-      })
-      .catch((error) => {
-        setMessage(error)
-      })
-
-    // Identity.fromWeb3()
-    //   .then((identity) => {
-    //     setIdentity(identity)
-    //     console.log('identity: ', identity)
-    //   })
-    //   .catch((error) => {
-    //     setMessage(error)
-    //   })
-  }, [])
-
-  useEffect(() => {
-    try {
-      if (identity) {
-        console.log('connected')
-
-        SubspaceClient.connect(
-          identity,
-          NODE_WS_PROVIDER,
-          FARMER_WS_PROVIDER
-        ).then((subspaceClient) => {
-          setSubspaceClient(subspaceClient)
-          setKeyringPair(identity.getKeyringPair())
-          setSelectedAccount(identity.getKeyringPair().address)
-        })
-      }
-    } catch (error) {
-      setMessage(error)
-    }
-  }, [identity])
-
-  const handleAccountSelect = ({ target }) => setSelectedAccount(target.value)
-
-  const getLabel = ({ address, meta }) => {
-    return meta.name.toUpperCase() + ' | ' + address
-  }
-
   return (
     <div>
       <Heading as="h1" size="lg">
@@ -74,10 +19,10 @@ const Page = () => {
         bg="lightgray"
         maxW={{ base: '100%', md: '700px' }}
       >
-        <p>Account address: {keyringPair && keyringPair.address}</p>
-        <p>Account name: {keyringPair && keyringPair.meta.name}</p>
+        {/* <p>Account address: {keyringPair && keyringPair.address}</p>
+        <p>Account name: {keyringPair && keyringPair.meta.name}</p> */}
       </Box>
-      {subspaceClient && <WasmComp client={subspaceClient} />}
+      <WasmComp />
     </div>
   )
 }
